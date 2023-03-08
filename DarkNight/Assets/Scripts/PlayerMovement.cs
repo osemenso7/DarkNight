@@ -5,18 +5,27 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
 
-    [SerializeField] private float playerSpeed = 10f;
-    [SerializeField] private float playerJump = 10f;
-
-    private float dirX;
-    private float dirY;
+    [SerializeField] private LayerMask jumpableGround;
 
     private Rigidbody2D playerBody;
+    private BoxCollider2D playerColl;
     private SpriteRenderer playerSprite;
     private Animator playerAnim;
 
+    private float dirX;
+    private string stateMovement = "stateMovement";
+    private string terrainTag = "Terrain";
+    private int doubleJump = 0;
+    private bool isGrounded = true;
+
+    // [SerializeField] = Nos permite ver estos parametros en el inspector
+    [SerializeField] private float moveSpeed = 7f;
+    [SerializeField] private float jumpForce = 14f;
+
+    private enum MovementState { iddle, running, jumping, falling }
+
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         playerBody = GetComponent<Rigidbody2D>();
         playerSprite = GetComponent<SpriteRenderer>();
@@ -24,41 +33,67 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        InputPlayer();
-        AnimationPlayer();
+        InputMovement();
+        UpdateAnimationState();
     }
 
-    void InputPlayer()
+    void InputMovement() 
+    {
+        // Left = -1 and Right = +1. If we use a joystick we get values in between.
+        dirX = Input.GetAxisRaw("Horizontal");
+        playerBody.velocity = new Vector2(dirX * moveSpeed, playerBody.velocity.y);
+
+        if (Input.GetButtonDown("Jump") && isGrounded)
+        {
+            playerBody.velocity = new Vector2(playerBody.velocity.x, jumpForce);
+
+            doubleJump++;
+            if (doubleJump >= 2)
+            {
+                isGrounded = false;
+                doubleJump = 0;
+            }
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision) {
+        if (collision.gameObject.CompareTag(terrainTag))
+        {
+            isGrounded = true;
+        }
+    }
+
+    private void UpdateAnimationState()
     {
 
-        // Get direction of the X depending on the input
-        dirX = Input.GetAxisRaw("Horizontal");
+        MovementState state;
 
         if (dirX > 0f)
         {
-            transform.position += new Vector3(dirX, 0, 0) * playerSpeed * Time.deltaTime; 
+            state = MovementState.running;
             playerSprite.flipX = false;
         }
         else if (dirX < 0f)
         {
-            transform.position += new Vector3(dirX, 0, 0) * playerSpeed * Time.deltaTime;
-            playerSprite.flipX = true; 
+            state = MovementState.running;
+            playerSprite.flipX = true;
         }
-
-        // Get direction of the Y depending on the input
-        if (Input.GetButtonDown("Jump"))
+        else
         {
-            playerBody.velocity = new Vector2(playerBody.velocity.x, playerJump);
+            state = MovementState.iddle;
         }
 
-    }
+        if (playerBody.velocity.y > .1f)
+        {
+            state = MovementState.jumping;
+        }
+        else if (playerBody.velocity.y < -.1f)
+        {
+            state = MovementState.falling;
+        }
 
-    void AnimationPlayer()
-    {
-
-        
-
+        playerAnim.SetInteger(stateMovement, (int) state);
     }
 }
