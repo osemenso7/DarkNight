@@ -2077,8 +2077,8 @@ GameObject:
   - component: {fileID: 964570234}
   - component: {fileID: 964570233}
   - component: {fileID: 964570236}
-  - component: {fileID: 964570232}
   - component: {fileID: 964570235}
+  - component: {fileID: 964570232}
   - component: {fileID: 964570237}
   m_Layer: 0
   m_Name: Player
@@ -2230,13 +2230,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 964570231}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3e0af3d817cf374b8b5c1a2fc1c399d, type: 3}
+  m_Script: {fileID: 11500000, guid: a6cf1145b859fb148bfeedfdbd3b9f37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 7
+  speed: 7
   jumpForce: 5
   dashForce: 12
-  dashCD: 0.5
 --- !u!1 &2104842353
 GameObject:
   m_ObjectHideFlags: 0

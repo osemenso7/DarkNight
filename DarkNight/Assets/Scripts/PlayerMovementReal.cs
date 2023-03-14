@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovementReal : MonoBehaviour
 {
 
     // Serialized elements
@@ -35,6 +35,7 @@ public class PlayerMovement : MonoBehaviour
 
     private enum MovementState { iddle, running, jumping, falling }
 
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -45,17 +46,17 @@ public class PlayerMovement : MonoBehaviour
         startGravity = playerBody.gravityScale;
     }
 
+
     // Update is called once per frame
     private void Update()
     {
-
         if (canMove)
         {
             InputMovement();
             UpdateAnimationState();
         }
-
     }
+    
 
     void InputMovement() 
     {
@@ -91,6 +92,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+
     // Control when the player touches the terrain
     private void OnCollisionEnter2D(Collision2D collision) {
         if (collision.gameObject.CompareTag(terrainTag))
@@ -101,16 +103,17 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+
     /* Another method to control if the player touches the ground
     private bool IsGrounded()
     {
         return Physics2D.BoxCast(coll.bounds.center, coll.bounds.size, 0f, Vector2.down, .1f, jumpableGround);
     }*/
 
+
     // Control animations of the player
     private void UpdateAnimationState()
     {
-
         MovementState state;
 
         if (dirX > 0f)
@@ -140,10 +143,10 @@ public class PlayerMovement : MonoBehaviour
         playerAnim.SetInteger(stateMovement, (int) state);
     }
 
+
     // Logic to do a dash
     private IEnumerator Dash()
     {
-
         isDashable = false;
         canMove = false;
         playerBody.gravityScale = 0;
@@ -163,19 +166,19 @@ public class PlayerMovement : MonoBehaviour
 
         // Start couldown of the dash
         StartCoroutine(DashCD());
-
+        
+        // Wait until the dash is completed
         yield return new WaitForSeconds(dashDuration);
 
         playerBody.gravityScale = startGravity;
         canMove = true;
     }
 
+
     // Couldown of the dash
     private IEnumerator DashCD()
     {
-
         yield return new WaitForSeconds(dashCD);
-
         isDashable = true;
     }
 }
