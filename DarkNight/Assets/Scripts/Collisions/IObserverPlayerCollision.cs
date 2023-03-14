@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IPlayerInputMovement
+public interface IObserverPlayerCollision
 {
-    int GetPlayerMovement();
+    bool GetPlayerCollision();
 }

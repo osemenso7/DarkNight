@@ -2,35 +2,43 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerStateMovement : MonoBehaviour
+public class PlayerStateMovement
 {
     // Player components
-    Rigidbody2D playerRigidBody;
+    private PlayerLogicMovement playerLogicMovement;
+    private Rigidbody2D playerRigidBody;
 
     // Player movement states
     private enum MovementState { iddle, running, jumping, falling, dashing }
 
-    private void Start()
+    // Others variables
+    private bool right = true;
+
+
+    public PlayerStateMovement() {  }
+
+    public PlayerStateMovement(PlayerLogicMovement playerLogicMovement, Rigidbody2D playerRigidBody) 
     {
-        // Initialize variables
-        this.playerRigidBody = GetComponent<Rigidbody2D>();
+        this.playerLogicMovement = playerLogicMovement;
+        this.playerRigidBody = playerRigidBody;
     }
 
-    private void Update()
-    {
-        Debug.Log(getPlayerStateMovement());
-    }
 
     // Get player movement state
-    public int getPlayerStateMovement()
+    public int GetPlayerStateMovement()
     {
-
         MovementState state;
 
         // Check velocity in X axis to determine if running or iddle
-        if (this.playerRigidBody.velocity.x != 0f)
+        if (this.playerRigidBody.velocity.x > .1f)
         {
             state = MovementState.running;
+            this.right = true;
+        }
+        else if (this.playerRigidBody.velocity.x < -.1f)
+        {
+            state = MovementState.running;
+            this.right = false;
         }
         else
         {
@@ -47,14 +55,18 @@ public class PlayerStateMovement : MonoBehaviour
             state = MovementState.falling;
         }
 
-        // Check gravity of the player to determine id dashing
-        if (this.playerRigidBody.gravityScale == 0)
+        // Check dash with input
+        if (this.playerLogicMovement.GetPlayerInputKeyboardMovement().GetPlayerMovement() == 2 && this.playerLogicMovement.GetIsDashable())
         {
             state = MovementState.dashing;
         }
 
         return (int) state;
+    }
+    
 
+    public bool getRight(){
+        return this.right;
     }
 
 }

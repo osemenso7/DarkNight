@@ -2079,7 +2079,9 @@ GameObject:
   - component: {fileID: 964570236}
   - component: {fileID: 964570235}
   - component: {fileID: 964570232}
+  - component: {fileID: 964570239}
   - component: {fileID: 964570237}
+  - component: {fileID: 964570238}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -2233,9 +2235,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6cf1145b859fb148bfeedfdbd3b9f37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &964570238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 964570231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdff3228c9730dd489810ddf83bcd305, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &964570239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 964570231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7b3b25f765ff934280a9c96e3b88a7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   speed: 7
   jumpForce: 5
-  dashForce: 12
+  dashForce: 20
+  dashCD: 1
 --- !u!1 &2104842353
 GameObject:
   m_ObjectHideFlags: 0
