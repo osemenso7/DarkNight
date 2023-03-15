@@ -2261,8 +2261,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 7
   jumpForce: 5
-  dashForce: 20
-  dashCD: 1
+  dashForce: 15
+  dashCD: 0.5
 --- !u!1 &2104842353
 GameObject:
   m_ObjectHideFlags: 0

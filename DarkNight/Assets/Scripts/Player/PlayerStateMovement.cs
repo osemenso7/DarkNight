@@ -12,7 +12,7 @@ public class PlayerStateMovement
     private enum MovementState { iddle, running, jumping, falling, dashing }
 
     // Others variables
-    private bool right = true;
+    private bool flipX = false;
 
 
     public PlayerStateMovement() {  }
@@ -33,12 +33,12 @@ public class PlayerStateMovement
         if (this.playerRigidBody.velocity.x > .1f)
         {
             state = MovementState.running;
-            this.right = true;
+            this.flipX = false;
         }
         else if (this.playerRigidBody.velocity.x < -.1f)
         {
             state = MovementState.running;
-            this.right = false;
+            this.flipX = true;
         }
         else
         {
@@ -65,8 +65,8 @@ public class PlayerStateMovement
     }
     
 
-    public bool getRight(){
-        return this.right;
+    public bool GetFlipX(){
+        return this.flipX;
     }
 
 }

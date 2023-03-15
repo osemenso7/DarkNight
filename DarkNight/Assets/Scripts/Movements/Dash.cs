@@ -2,30 +2,50 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Dash
+public class Dash : MonoBehaviour, IMovement
 {
 
-    private float dashTime;
+    // Player components
+    private Player player;
+    private Rigidbody2D playerRigidBody;
+    private SpriteRenderer playerSpriteRenderer;
+
+    // Dash stats
+    private DashController dashControl;
     
-    public Dash()
+
+    public Dash() { }
+
+    private void Start()
     {  
-        this.dashTime = 0.25f;
+        this.player = GetComponent<Player>();
+        this.playerRigidBody = GetComponent<Rigidbody2D>();
+        this.playerSpriteRenderer = GetComponent<SpriteRenderer>();
+
+        this.dashControl = new DashController(this.playerRigidBody, this.player.GetDashCD());
     }
 
-    public void MakeDash(Rigidbody2D playerRigidBody, SpriteRenderer playerSpriteRenderer, float dashForce)
+
+    // Make dash
+    public void MakeMove()
     {
-        if (playerSpriteRenderer.flipX == false)
+        if (this.playerSpriteRenderer.flipX == false)
         {
-            playerRigidBody.velocity = new Vector2(dashForce, 0);
+            this.playerRigidBody.velocity = new Vector2(this.player.GetDashForce(), 0);
         }
         else
         {
-            playerRigidBody.velocity = new Vector2(-dashForce, 0);
+            this.playerRigidBody.velocity = new Vector2(-this.player.GetDashForce(), 0);
         }
+
+        StartCoroutine(this.dashControl.DashControl());
+        StartCoroutine(this.dashControl.DashCooldown());
     }
 
-    public float GetDashTime(){
-        return this.dashTime;
+    // Getter
+    public DashController GetDashController()
+    {
+        return this.dashControl;
     }
 
 }

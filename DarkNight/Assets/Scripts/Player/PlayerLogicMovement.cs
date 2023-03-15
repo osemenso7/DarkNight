@@ -20,9 +20,7 @@ public class PlayerLogicMovement : MonoBehaviour
     private Dash dash;
 
     // Player movement logic variables
-    private float startGravity;
     private bool canMove = true;
-    private bool isDashable = true;
 
 
     private void Start()
@@ -34,62 +32,35 @@ public class PlayerLogicMovement : MonoBehaviour
         this.playerBoxCollider = GetComponent<BoxCollider2D>();
 
         this.playerInputKeyboardMovement = new PlayerInputKeyboardMovement();
-        this.startGravity = this.playerRigidBody.gravityScale;
 
-        this.movement = new Movement();
-        this.jump = new Jump();
-        this.dash = new Dash();
+        this.movement = new Movement(this.playerRigidBody, this.player.GetSpeed(), this.playerInputKeyboardMovement.GetDirX());
+        this.jump = new Jump(this.playerRigidBody, this.player.GetjumpForce());
+        this.dash = GetComponent<Dash>();
     }
 
-    private void Update(){
+    private void LateUpdate(){
 
         // Get input from keyboard
-        int action = playerInputKeyboardMovement.GetPlayerMovement();
+        int action = this.playerInputKeyboardMovement.GetPlayerMovement();
+        this.canMove = this.dash.GetDashController().GetCanMove();
 
         if (this.canMove)
         {
             if (action == 1)    // Jump
             {
-                this.jump.MakeJump(this.playerRigidBody, this.player.GetjumpForce());
+                this.jump.MakeMove();
             }
-            else if (action == 2 && isDashable)   // Dash
+            else if (action == 2 && this.dash.GetDashController().GetIsDashable())   // Dash
             {      
-                StartCoroutine(DashControl());
+                this.dash.MakeMove();
             }
             else    // Move or iddle
             {
-                this.movement.MakeMoveX(this.playerRigidBody, this.player.GetSpeed(), this.playerInputKeyboardMovement.GetDirX());
+                this.movement.SetDirX(this.playerInputKeyboardMovement.GetDirX());
+                this.movement.MakeMove();
             }
         }
 
-    }
-
-
-    private IEnumerator DashControl()
-    {
-        // Check if the dash is completed and its cooldown
-        this.isDashable = false;
-        this.canMove = false;
-
-        // With gravity = 0 we achieve a straight dash
-        this.playerRigidBody.gravityScale = 0;
-
-        this.dash.MakeDash(this.playerRigidBody, this.playerSpriteRenderer, this.player.GetDashForce());
-
-        // Start dash cooldown
-        StartCoroutine(DashCooldown());
-
-        // Wait until the dash ends
-        yield return new WaitForSeconds(this.dash.GetDashTime());
-
-        this.playerRigidBody.gravityScale = this.startGravity;
-        this.canMove = true;
-    }
-
-    private IEnumerator DashCooldown()
-    {
-        yield return new WaitForSeconds(this.player.GetDashCD());
-        this.isDashable = true;
     }
     
 
@@ -98,7 +69,7 @@ public class PlayerLogicMovement : MonoBehaviour
         return this.playerInputKeyboardMovement;
     }
     public bool GetIsDashable(){
-        return this.isDashable;
+        return this.dash.GetDashController().GetIsDashable();
     }
     
 }

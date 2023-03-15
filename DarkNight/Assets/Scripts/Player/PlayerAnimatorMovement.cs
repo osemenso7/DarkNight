@@ -36,13 +36,13 @@ public class PlayerAnimatorMovement : MonoBehaviour
     {
         this.state = this.playerStateMovement.GetPlayerStateMovement();
 
-        if (this.playerStateMovement.getRight())
+        if (this.playerStateMovement.GetFlipX())
         {
-            this.playerSpriteRenderer.flipX = false;
+            this.playerSpriteRenderer.flipX = true;
         }
         else
         {
-            this.playerSpriteRenderer.flipX = true;
+            this.playerSpriteRenderer.flipX = false;
         }
         
         this.playerAnimatorMovement.SetInteger(STATE_ANIM, state);
