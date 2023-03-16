@@ -58,7 +58,17 @@ public class PlayerStateMovement
         // Check dash with input
         if (this.playerLogicMovement.GetPlayerInputKeyboardMovement().GetPlayerMovement() == 2 && this.playerLogicMovement.GetIsDashable())
         {
-            state = MovementState.dashing;
+            if (this.playerLogicMovement.GetIsGrounded())
+            {
+                state = MovementState.dashing;
+            }
+            else
+            {
+                if (this.playerLogicMovement.GetAirDash())
+                {
+                    state = MovementState.dashing;
+                }
+            }
         }
 
         return (int) state;

@@ -2,14 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerLogicMovement : MonoBehaviour
+public class PlayerLogicMovement : MonoBehaviour, IPlayerCollisionObserver
 {
 
     // Player Components
     private Player player;
     private Rigidbody2D playerRigidBody;
     private SpriteRenderer playerSpriteRenderer;
-    private BoxCollider2D playerBoxCollider;
+
+    // Player collision
+    private PlayerCollisionGroundHandler playerCollisionGround;
 
     // Player movement input
     private PlayerInputKeyboardMovement playerInputKeyboardMovement;
@@ -21,6 +23,9 @@ public class PlayerLogicMovement : MonoBehaviour
 
     // Player movement logic variables
     private bool canMove = true;
+    private bool isGrounded = true;
+    private bool airDash = true;
+    private int doubleJump = 0;
 
 
     private void Start()
@@ -29,16 +34,18 @@ public class PlayerLogicMovement : MonoBehaviour
         this.player = GetComponent<Player>();
         this.playerRigidBody = GetComponent<Rigidbody2D>();
         this.playerSpriteRenderer = GetComponent<SpriteRenderer>();
-        this.playerBoxCollider = GetComponent<BoxCollider2D>();
 
         this.playerInputKeyboardMovement = new PlayerInputKeyboardMovement();
+        this.playerCollisionGround = GetComponent<PlayerCollisionGroundHandler>();
+        this.playerCollisionGround.SetPlayerCollisionObserver(this);
 
         this.movement = new Movement(this.playerRigidBody, this.player.GetSpeed(), this.playerInputKeyboardMovement.GetDirX());
         this.jump = new Jump(this.playerRigidBody, this.player.GetjumpForce());
         this.dash = GetComponent<Dash>();
     }
 
-    private void LateUpdate(){
+    private void LateUpdate()
+    {
 
         // Get input from keyboard
         int action = this.playerInputKeyboardMovement.GetPlayerMovement();
@@ -46,13 +53,26 @@ public class PlayerLogicMovement : MonoBehaviour
 
         if (this.canMove)
         {
-            if (action == 1)    // Jump
+            if (action == 1 && (this.isGrounded || doubleJump < 2))    // Jump
             {
                 this.jump.MakeMove();
+                isGrounded = false;
+                doubleJump++;
             }
             else if (action == 2 && this.dash.GetDashController().GetIsDashable())   // Dash
             {      
-                this.dash.MakeMove();
+                if (this.isGrounded)
+                {
+                    this.dash.MakeMove();
+                }
+                else
+                {
+                    if (this.airDash)
+                    {
+                        this.dash.MakeMove();
+                        this.airDash = false;
+                    }
+                }
             }
             else    // Move or iddle
             {
@@ -62,6 +82,13 @@ public class PlayerLogicMovement : MonoBehaviour
         }
 
     }
+
+    public void SetIsGrounded()
+    {
+        this.isGrounded = true;
+        this.airDash = true;
+        this.doubleJump = 0;
+    }
     
 
     // Getters
@@ -70,6 +97,14 @@ public class PlayerLogicMovement : MonoBehaviour
     }
     public bool GetIsDashable(){
         return this.dash.GetDashController().GetIsDashable();
+    }
+
+    public bool GetAirDash(){
+        return this.airDash;
+    }
+
+    public bool GetIsGrounded(){
+        return this.isGrounded;
     }
     
 }

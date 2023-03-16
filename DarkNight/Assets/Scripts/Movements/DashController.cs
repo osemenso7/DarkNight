@@ -9,12 +9,11 @@ public class DashController
     Rigidbody2D playerRigidBody;
 
     // Dash control variables
+    private float dashTime = 0.25f;
     private float startGravity;
     private float dashCD;
-
     private bool isDashable = true;
     private bool canMove = true;
-    private float dashTime = 0.25f;
 
 
     public DashController() {  }

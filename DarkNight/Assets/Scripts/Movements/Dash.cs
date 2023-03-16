@@ -14,8 +14,6 @@ public class Dash : MonoBehaviour, IMovement
     private DashController dashControl;
     
 
-    public Dash() { }
-
     private void Start()
     {  
         this.player = GetComponent<Player>();

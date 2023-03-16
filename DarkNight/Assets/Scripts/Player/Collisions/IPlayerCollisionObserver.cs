@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IObserverPlayerCollision
+public interface IPlayerCollisionObserver
 {
-    bool GetPlayerCollision();
+    void SetIsGrounded();
 }
