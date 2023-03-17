@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerLogicMovement : MonoBehaviour, IPlayerCollisionObserver
+public class PlayerLogicMovement : MonoBehaviour, IPlayerCollisionObserver, IPlayerMovementHandler
 {
 
     // Player Components
@@ -10,11 +10,10 @@ public class PlayerLogicMovement : MonoBehaviour, IPlayerCollisionObserver
     private Rigidbody2D playerRigidBody;
     private SpriteRenderer playerSpriteRenderer;
 
-    // Player collision
+    // Player logic
     private PlayerCollisionGroundHandler playerCollisionGround;
-
-    // Player movement input
     private PlayerInputKeyboardMovement playerInputKeyboardMovement;
+    private IPlayerMovementObserver playerMovementObserver;
 
     // Player movements
     private Movement movement;
@@ -44,7 +43,7 @@ public class PlayerLogicMovement : MonoBehaviour, IPlayerCollisionObserver
         this.dash = GetComponent<Dash>();
     }
 
-    private void LateUpdate()
+    private void Update()
     {
 
         // Get input from keyboard
@@ -63,12 +62,14 @@ public class PlayerLogicMovement : MonoBehaviour, IPlayerCollisionObserver
             {      
                 if (this.isGrounded)
                 {
+                    this.SetStateMovement();
                     this.dash.MakeMove();
                 }
                 else
                 {
                     if (this.airDash)
                     {
+                        this.SetStateMovement();
                         this.dash.MakeMove();
                         this.airDash = false;
                     }
@@ -89,22 +90,14 @@ public class PlayerLogicMovement : MonoBehaviour, IPlayerCollisionObserver
         this.airDash = true;
         this.doubleJump = 0;
     }
-    
 
-    // Getters
-    public PlayerInputKeyboardMovement GetPlayerInputKeyboardMovement(){
-        return this.playerInputKeyboardMovement;
-    }
-    public bool GetIsDashable(){
-        return this.dash.GetDashController().GetIsDashable();
+    public void SetPlayerMovementObserver(IPlayerMovementObserver playerMovementObserver)
+    {
+        this.playerMovementObserver = playerMovementObserver;
     }
 
-    public bool GetAirDash(){
-        return this.airDash;
+    public void SetStateMovement()
+    {
+        this.playerMovementObserver.CheckMovement();
     }
-
-    public bool GetIsGrounded(){
-        return this.isGrounded;
-    }
-    
 }

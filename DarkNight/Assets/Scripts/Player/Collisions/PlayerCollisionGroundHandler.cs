@@ -6,7 +6,7 @@ public class PlayerCollisionGroundHandler : MonoBehaviour, IPlayerCollisionHandl
 {
 
     // PLayer observer
-    private IPlayerCollisionObserver playerObserver;
+    private IPlayerCollisionObserver playerCollisionObserver;
 
     // Ground collision control variables
     private string TERRAIN_TAG = "Terrain";
@@ -14,7 +14,7 @@ public class PlayerCollisionGroundHandler : MonoBehaviour, IPlayerCollisionHandl
 
     public void HandlePlayerCollision()
     {
-        this.playerObserver.SetIsGrounded();
+        this.playerCollisionObserver.SetIsGrounded();
     }
 
 
@@ -27,8 +27,8 @@ public class PlayerCollisionGroundHandler : MonoBehaviour, IPlayerCollisionHandl
         }
     }
 
-    public void SetPlayerCollisionObserver(IPlayerCollisionObserver playerObserver)
+    public void SetPlayerCollisionObserver(IPlayerCollisionObserver playerCollisionObserver)
     {
-        this.playerObserver = playerObserver;
+        this.playerCollisionObserver = playerCollisionObserver;
     }
 }

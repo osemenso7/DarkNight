@@ -5,78 +5,45 @@ using UnityEngine;
 public class PlayerStateMovement
 {
     // Player components
-    private PlayerLogicMovement playerLogicMovement;
     private Rigidbody2D playerRigidBody;
+    private SpriteRenderer playerSpriteRenderer;
+    private PlayerLogicMovement playerLogicMovementObservable;
 
-    // Player movement states
-    private enum MovementState { iddle, running, jumping, falling, dashing }
-
-    // Others variables
-    private bool flipX = false;
+    // States
+    private StateIddle stateIddle;
+    private StateRunning stateRunning;
+    private StateJumping stateJumping;
+    private StateFalling stateFalling;
+    private StateDashing stateDashing;
+    private int state = 0;
 
 
     public PlayerStateMovement() {  }
 
-    public PlayerStateMovement(PlayerLogicMovement playerLogicMovement, Rigidbody2D playerRigidBody) 
+    public PlayerStateMovement(Rigidbody2D playerRigidBody, SpriteRenderer playerSpriteRenderer, PlayerLogicMovement playerLogicMovementObservable) 
     {
-        this.playerLogicMovement = playerLogicMovement;
         this.playerRigidBody = playerRigidBody;
+        this.playerSpriteRenderer = playerSpriteRenderer;
+        this.playerLogicMovementObservable = playerLogicMovementObservable;
+
+        this.stateIddle = new StateIddle();
+        this.stateRunning = new StateRunning(this.playerRigidBody, this.playerSpriteRenderer);
+        this.stateJumping = new StateJumping(this.playerRigidBody);
+        this.stateFalling = new StateFalling(this.playerRigidBody);
+        this.stateDashing = new StateDashing(this.playerLogicMovementObservable);
     }
 
 
     // Get player movement state
     public int GetPlayerStateMovement()
     {
-        MovementState state;
-
-        // Check velocity in X axis to determine if running or iddle
-        if (this.playerRigidBody.velocity.x > .1f)
-        {
-            state = MovementState.running;
-            this.flipX = false;
-        }
-        else if (this.playerRigidBody.velocity.x < -.1f)
-        {
-            state = MovementState.running;
-            this.flipX = true;
-        }
-        else
-        {
-            state = MovementState.iddle;
-        }
-        
-        // Check velocity in Y axis to determine if jumping or falling
-        if (this.playerRigidBody.velocity.y > .1f)
-        {
-            state = MovementState.jumping;
-        }
-        else if (this.playerRigidBody.velocity.y < -.1f)
-        {
-            state = MovementState.falling;
-        }
-
-        // Check dash with input
-        if (this.playerLogicMovement.GetPlayerInputKeyboardMovement().GetPlayerMovement() == 2 && this.playerLogicMovement.GetIsDashable())
-        {
-            if (this.playerLogicMovement.GetIsGrounded())
-            {
-                state = MovementState.dashing;
-            }
-            else
-            {
-                if (this.playerLogicMovement.GetAirDash())
-                {
-                    state = MovementState.dashing;
-                }
-            }
-        }
+        this.state = this.stateIddle.SetState(state);
+        this.state = this.stateRunning.SetState(state);
+        this.state = this.stateJumping.SetState(state);
+        this.state = this.stateFalling.SetState(state);
+        this.state = this.stateDashing.SetState(state);
 
         return (int) state;
-    }
-    
-
-    public bool GetFlipX(){
-        return this.flipX;
     }
 
 }
